@@ -76,11 +76,11 @@ class AdalineLayer(Layer):
                     if i == index:
                         if output_value[index] != 1:
                             is_incorrect = True
-                            self.neurons[index].adjust_weights(1, 0, learning_rate, features)
+                            self.neurons[index].adjust_weights(1, output_value[index], learning_rate, features)
                     else:
                         if output_value[i] != 0:
                             is_incorrect = True
-                            self.neurons[i].adjust_weights(0, 1, learning_rate, features)
+                            self.neurons[i].adjust_weights(0, output_value[i], learning_rate, features)
 
                             if sum(output_value) == 1:
                                 false_positives[str(i)] += 1
