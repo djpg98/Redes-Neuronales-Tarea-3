@@ -19,7 +19,7 @@ class Adaline(Perceptron):
 
         factor = learning_rate * (expected_value - output_value)
 
-        self.weights_gradient = map(lambda x: factor * x, features)
+        self.weights_gradient = list(map(lambda x: factor * x, features))
 
         self.weights = list(map(lambda pair: pair[0] + pair[1], zip(self.weights, self.weights_gradient)))
 
