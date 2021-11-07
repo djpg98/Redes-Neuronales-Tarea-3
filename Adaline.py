@@ -8,12 +8,27 @@ class Adaline(Perceptron):
         super().__init__(input_dimension, lambda x: x)
         self.weights_gradient = [0 for i in range(input_dimension + 1)]
 
+        """ Permite ajustar los pesos del perceptron cuando hay un dato mal clasificado 
+        Parámetros:
+            - expected_value: Valor que se esperaba devolviera el perceptron para el dato dado
+            - output_value: Valor devuelto por el perceptron para el dato dado
+            - learning_rate: Tasa de aprendizaje a aplicar
+            - features: El dato a partir del cual se obtuvo el resultado de output_value
+    """
+    def adjust_weights(self, expected_value, output_value, learning_rate, features):
+
+        factor = learning_rate * (expected_value - output_value)
+
+        self.weights_gradient = map(lambda x: factor * x, features)
+
+        self.weights = list(map(lambda pair: pair[0] + pair[1], zip(self.weights, self.weights_gradient)))
+
 class AdalineLayer(Layer):
 
     def __init__(self, dimension=None, input_dimension=None, activation_function=None, adaline_list=[]):
         if adaline_list == []:
             self.dimension = dimension
-            self.neurons = [Adaline(input_dimension, activation_function) for i in range(dimension)]
+            self.neurons = [Adaline(input_dimension) for i in range(dimension)]
             #self.weight_gradient = [[0 for i in range(input_dimension + 1)] for j  in range(dimension)]
         else:
             self.dimension = len(adaline_list)
@@ -21,8 +36,8 @@ class AdalineLayer(Layer):
             #self.weight_gradient = [[0 for i in range(len(self.neurons[0].weights))] for j  in range(self.dimension)]
 
     def in_minimum(self):
-        for i in range(self.neurons):
-            if not all([gradient_component == 0 for gradient_component in self.neurons[i]]):
+        for i in range(len(self.neurons)):
+            if not all([gradient_component == 0 for gradient_component in self.neurons[i].weights_gradient]):
                 return False
 
         return True
