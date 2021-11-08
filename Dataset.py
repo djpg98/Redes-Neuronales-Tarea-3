@@ -171,6 +171,11 @@ class MultiClassDataset(DatasetMixin):
     def get_label_index(self, label):
         return self.label_dictionary[label]
 
+    def get_label_vector(self,label):
+        vector = [0 for i in range(self.feature_vector_length())]
+        vector[self.get_label_index(label)] = 1
+        return vector
+
     """ Iterar por todas las etiquetas (Categorías) posibles"""
     def get_labels(self):
 

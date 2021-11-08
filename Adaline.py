@@ -1,6 +1,6 @@
 from Perceptron import Perceptron
 from MLP import Layer
-from metrics import accuracy, precision
+from metrics import accuracy, precision, sample_error
 
 class Adaline(Perceptron):
 
@@ -61,14 +61,13 @@ class AdalineLayer(Layer):
 
         dataset.add_bias_term()
         assert(dataset.feature_vector_length() == len(self.neurons[0].weights))
-
-        labels_header = ",".join(["prec. label " + str(key) for key in dataset.get_labels()])       
+       
         print("Training information\n")
-        print(f'epoch, accuracy, {labels_header}')
+        print(f'epoch, MSE')
 
         for current_epoch in range(epochs):
 
-            error_number = 0
+            sum_mse = 0
 
             for features, expected_value in dataset:
 
@@ -77,6 +76,7 @@ class AdalineLayer(Layer):
                 index = dataset.get_label_index(expected_value)
 
                 is_incorrect = False
+                error = sample_error(dataset.get_label_vector(expected_value), output_value)
 
                 for i in range(len(output_value)):
 
@@ -91,10 +91,11 @@ class AdalineLayer(Layer):
 
 
 
-                if is_incorrect:
-                    error_number += 1
+                sum_mse += error
 
-            print(f'{current_epoch}, {accuracy(dataset.size(), error_number)}')
+            mse = sum_mse / dataset.size()
+
+            print(f'{current_epoch}, {mse}')
             if not self.in_minimum():
                 dataset.shuffle_all()
             else:
@@ -111,7 +112,7 @@ class AdalineLayer(Layer):
 
         labels_header = ",".join(["prec. label " + str(key) for key in dataset.get_labels()])
         print('Test information\n')
-        print(f'accuracy, {labels_header}')
+        print(f'accuracy, mse, {labels_header}')
 
         error_number = 0
         true_positives = {}
@@ -121,7 +122,7 @@ class AdalineLayer(Layer):
             true_positives[key] = 0
             false_positives[key] = 0
 
-
+        sum_mse = 0
         for features, expected_value in dataset:
 
             output_value = self.output_with_threshold(features)
@@ -129,6 +130,8 @@ class AdalineLayer(Layer):
             index = dataset.get_label_index(expected_value)
 
             is_incorrect = False
+
+            error = sample_error(dataset.get_label_vector(expected_value), output_value)
 
             for i in range(len(output_value)):
 
@@ -147,6 +150,10 @@ class AdalineLayer(Layer):
             else:
                 true_positives[str(index)] += 1
 
+            sum_mse += error
+
+        mse = sum_mse / dataset.size()
+
         precision_list = []
 
         for key in dataset.get_labels():
@@ -157,4 +164,4 @@ class AdalineLayer(Layer):
         print("SIZE")
         print(dataset.size())
         precision_string = ",".join([str(value) for value in precision_list])
-        print(f'{accuracy(dataset.size(), error_number)}, {precision_string}')
+        print(f'{accuracy(dataset.size(), error_number)}, {mse}, {precision_string}')
