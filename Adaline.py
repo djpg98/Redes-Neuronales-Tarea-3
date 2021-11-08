@@ -65,6 +65,8 @@ class AdalineLayer(Layer):
         print("Training information\n")
         print(f'epoch, MSE')
 
+        prev_mse = 0
+
         for current_epoch in range(epochs):
 
             sum_mse = 0
@@ -75,19 +77,14 @@ class AdalineLayer(Layer):
 
                 index = dataset.get_label_index(expected_value)
 
-                is_incorrect = False
                 error = sample_error(dataset.get_label_vector(expected_value), output_value)
 
                 for i in range(len(output_value)):
 
                     if i == index:
-                        if output_value[index] != 1:
-                            is_incorrect = True
                         self.neurons[index].adjust_weights(1, output_value[index], learning_rate, features)
                     else:
-                        if output_value[i] != 0:
-                            is_incorrect = True
-                        self.neurons[i].adjust_weights(0, output_value[i], learning_rate, features)
+                        self.neurons[i].adjust_weights(-1, output_value[i], learning_rate, features)
 
 
 
@@ -96,7 +93,8 @@ class AdalineLayer(Layer):
             mse = sum_mse / dataset.size()
 
             print(f'{current_epoch}, {mse}')
-            if not self.in_minimum():
+            if abs(prev_mse - mse) >= 0.00001:
+                prev_mse = mse
                 dataset.shuffle_all()
             else:
                 break
@@ -109,6 +107,9 @@ class AdalineLayer(Layer):
               mismo
     """
     def eval(self, dataset):
+
+        dataset.add_bias_term()
+        assert(dataset.feature_vector_length() == len(self.neurons[0].weights))
 
         labels_header = ",".join(["prec. label " + str(key) for key in dataset.get_labels()])
         print('Test information\n')
@@ -139,10 +140,10 @@ class AdalineLayer(Layer):
                     if output_value[index] != 1:
                         is_incorrect = True
                 else:
-                    if output_value[i] != 0:
+                    if output_value[i] != -1:
                         is_incorrect = True
 
-                        if sum(output_value) == 1:
+                        if sum(output_value) == -9:
                             false_positives[str(i)] += 1
 
             if is_incorrect:

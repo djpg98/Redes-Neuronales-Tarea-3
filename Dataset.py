@@ -172,7 +172,7 @@ class MultiClassDataset(DatasetMixin):
         return self.label_dictionary[label]
 
     def get_label_vector(self,label):
-        vector = [0 for i in range(self.feature_vector_length())]
+        vector = [-1 for i in range(len(self.label_dictionary))]
         vector[self.get_label_index(label)] = 1
         return vector
 
