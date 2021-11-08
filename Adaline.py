@@ -25,7 +25,7 @@ class Adaline(Perceptron):
         self.weights = list(map(lambda pair: pair[0] + pair[1], zip(self.weights, self.weights_gradient)))
 
     def output_with_threshold(self, inputs):
-        return self.threshold_function(self.activation_function(inputs))
+        return self.threshold_function(self.activation_function(self.sum_inputs(inputs)))
 
 class AdalineLayer(Layer):
 
