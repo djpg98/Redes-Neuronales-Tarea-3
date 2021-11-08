@@ -93,7 +93,7 @@ class AdalineLayer(Layer):
             mse = sum_mse / dataset.size()
 
             print(f'{current_epoch}, {mse}')
-            if abs(prev_mse - mse) >= 0.00001:
+            if abs(prev_mse - mse) >= 0.000001:
                 prev_mse = mse
                 dataset.shuffle_all()
             else:
