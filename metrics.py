@@ -13,4 +13,4 @@ def accuracy(total_data, errors):
 
 def sample_error(expeted_value, output_value):
 
-    return 0.5 * sum(map(lambda pair: math.pow(pair[0] - pair[1], 2), zip(expeted_value, output_value))
+    return 0.5 * sum(map(lambda pair: math.pow(pair[0] - pair[1], 2), zip(expeted_value, output_value)))
