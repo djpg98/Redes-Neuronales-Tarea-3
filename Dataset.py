@@ -1,5 +1,9 @@
 import csv
 import random
+import math
+
+def powers_of_x(argument, degree):
+    return [math.pow(argument, i) for i in range(degree + 1)]
 
 """ Conjunto de funciones básicas que debe tener un dataset """
 class DatasetMixin:
@@ -193,3 +197,56 @@ class MultiClassDataset(DatasetMixin):
 
         for index in self.index_list:
             yield (self.features[index], self.values[index])
+
+class PolinomialDataset(DatasetMixin):
+
+    def __init__(self, datafile, degree):
+
+        self.features = []
+        self.values = []
+
+        with open(datafile, 'r') as csv_file:
+
+            data_reader = csv.reader(csv_file, delimiter=",")
+            
+            #SKip header
+            next(data_reader)
+
+            for row in data_reader:
+
+                features, value = powers_of_x(float(row[0]), degree), float(row[1])
+
+                self.features.append(features)
+                self.values.append(value)
+
+            csv_file.close()
+
+        self.index_list = [i for i in range(len(self.features))]
+        self.shuffle_all()
+
+    """ Altera aleatoriamente el orden de los índices en index_list,
+        lo que permite que se pueda iterar en orden distinto en
+        distintas epochs"""
+    def shuffle_all(self):
+        random.shuffle(self.index_list)
+
+    """" En esta clase, lo que sería el componente correspondiente al sesgo se crea al momento
+         de asignar crear el vector con todas las potencias del valor de entrada en el dataset,
+         Para evitar errores, puse este método que te devuelve un error si intentas agregar el 
+         sesgo otra vez después de eso
+    """
+    def add_bias_term(self):
+
+        raise Exception('clase PolinomialDataset agregra el componente correspondiente al sesgo al momento de crear el dataset. No invocar este método')
+
+    """" Iterador por todos los elementos del dataset"""
+    def __iter__(self):
+
+        for index in self.index_list:
+            yield (self.features[index], self.values[index])
+
+    def normalize_data(self, normalizer_function):
+
+        for i in range(len(self.features)):
+            self.features[i] = list(map(normalizer_function, self.features[i]))
+            #self.values[i] = normalizer_function(self.values[i])

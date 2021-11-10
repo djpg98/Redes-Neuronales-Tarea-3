@@ -1,6 +1,7 @@
 from Perceptron import Perceptron
 from MLP import Layer
 from metrics import accuracy, precision, sample_error
+import csv
 
 class Adaline(Perceptron):
 
@@ -26,6 +27,82 @@ class Adaline(Perceptron):
 
     def output_with_threshold(self, inputs):
         return self.threshold_function(self.activation_function(self.sum_inputs(inputs)))
+
+    def train(self, dataset, epochs, learning_rate, verbose=False, save_training_error=''):
+        assert(dataset.feature_vector_length() == len(self.weights))
+
+        if save_training_error != '':
+            training_data = [["epoch", "error"]]
+
+        print("Training information\n")
+        print("Epoch, error")
+
+        prev_mse = 0
+
+        for current_epoch in range(epochs):
+
+            sum_mse = 0
+
+            for features, expected_value in dataset:
+
+                output_value = self.output(features)
+                
+                error = sample_error([expected_value], [output_value])
+
+                self.adjust_weights(expected_value, output_value, learning_rate, features)
+
+                sum_mse += error
+
+            mse = sum_mse / dataset.size()
+
+            if abs(prev_mse - mse) < 0.00001:
+                if verbose:
+                    print(f'{current_epoch + 1}, {mse}')
+                if save_training_error != '':
+                    training_data.append([current_epoch + 1, mse])
+            else:
+                prev_mse = mse
+                dataset.shuffle_all()
+                if verbose:
+                    print(f'{current_epoch + 1}, {mse}')
+
+                if save_training_error != '':
+                    training_data.append([current_epoch + 1, mse])
+
+
+        if verbose:
+            print("Pesos finales: ")
+            print(self.weights)
+            print("")
+
+        if save_training_error != '':
+
+            with open(save_training_error, 'w') as training_results:
+                writer = csv.writer(training_results)
+
+                for row in training_data:
+                    writer.writerow(row)
+
+                training_results.close()
+
+
+    def eval(self, dataset):
+
+        print("Test information\n")
+        print("error")
+
+        sum_mse = 0
+
+        for features, expected_value in dataset:
+
+            output_value = self.output(features)
+            #print(f'{output_value}, {expected_value}')
+            error = sample_error([expected_value], [output_value])
+            sum_mse += error
+
+        mse = sum_mse / dataset.size()
+            
+        print(f'{mse}')
 
 class AdalineLayer(Layer):
 
