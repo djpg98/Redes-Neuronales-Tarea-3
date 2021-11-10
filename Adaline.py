@@ -55,19 +55,13 @@ class Adaline(Perceptron):
 
             mse = sum_mse / dataset.size()
 
-            if abs(prev_mse - mse) < 0.00001:
-                if verbose:
-                    print(f'{current_epoch + 1}, {mse}')
-                if save_training_error != '':
-                    training_data.append([current_epoch + 1, mse])
-            else:
-                prev_mse = mse
-                dataset.shuffle_all()
-                if verbose:
-                    print(f'{current_epoch + 1}, {mse}')
+            prev_mse = mse
+            dataset.shuffle_all()
+            if verbose:
+                print(f'{current_epoch + 1}, {mse}')
 
-                if save_training_error != '':
-                    training_data.append([current_epoch + 1, mse])
+            if save_training_error != '':
+                training_data.append([current_epoch + 1, mse])
 
 
         if verbose:
