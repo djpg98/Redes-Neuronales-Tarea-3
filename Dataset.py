@@ -2,8 +2,15 @@ import csv
 import random
 import math
 
-def powers_of_x(argument, degree):
-    return [math.pow(argument, i) for i in range(degree + 1)]
+"""" Dado un valor x y un entero degree, devuelve un vector de la forma 
+     [1, x^1, x^2,...,x^degree]
+     Parámetros:
+        - x: Valor que servirá como base para las potencias en este vector
+        - degree: Máxima potencia a inlcuir en el vector. Se incluyen todas
+        las potencias que van de 0 a degree en ese orden.
+"""
+def powers_of_x(x, degree):
+    return [math.pow(x, i) for i in range(degree + 1)]
 
 """ Conjunto de funciones básicas que debe tener un dataset """
 class DatasetMixin:
@@ -197,9 +204,16 @@ class MultiClassDataset(DatasetMixin):
 
         for index in self.index_list:
             yield (self.features[index], self.values[index])
-
+            
+""" Esta Dataset se utiliza cuando se tiene un punto x y otro y se desea 
+    conseguir un interpolador polinomial que permita obtener y a partir de x"""
 class PolinomialDataset(DatasetMixin):
 
+    """ Constructor de la clase
+        Parámetros:
+            - datafile: El archivo con los datos en formato csv
+            - degree: Grado del interpolador polinomial
+    """
     def __init__(self, datafile, degree):
 
         self.features = []
@@ -244,9 +258,3 @@ class PolinomialDataset(DatasetMixin):
 
         for index in self.index_list:
             yield (self.features[index], self.values[index])
-
-    def normalize_data(self, normalizer_function):
-
-        for i in range(len(self.features)):
-            self.features[i] = list(map(normalizer_function, self.features[i]))
-            #self.values[i] = normalizer_function(self.values[i])
