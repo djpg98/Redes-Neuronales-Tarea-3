@@ -51,10 +51,10 @@ epoch, MSE
 47, 0.8005323744996115
 Test information
 
-accuracy, mse, prec. label 0,prec. label 1,prec. label 2,prec. label 3,prec. label 4,prec. label 5,prec. label 6,prec. label 7,prec. label 8,prec. label 9
+accuracy, mse
 ERROR NUMBER
 3398
 SIZE
 10000
-0.6602, 0.7702, 1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0
+0.6602, 0.7702
 

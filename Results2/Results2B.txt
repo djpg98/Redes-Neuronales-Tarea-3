@@ -53,9 +53,9 @@ epoch, MSE
 49, 1.4646156702469049
 Test information
 
-accuracy, mse, prec. label 0,prec. label 1,prec. label 2,prec. label 3,prec. label 4,prec. label 5,prec. label 6,prec. label 7,prec. label 8,prec. label 9
+accuracy, mse
 ERROR NUMBER
 4072
 SIZE
 10000
-0.5928, 1.0866, 1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0
+0.5928, 1.0866

@@ -124,10 +124,14 @@ class Adaline(Perceptron):
               de un archivo csv y permite realizar ciertas operaciones sobre el
               mismo
     """
-    def eval(self, dataset):
+    def eval(self, dataset, save_output=''):
 
         print("Test information\n")
         print("error")
+
+        if save_output != '':
+            output_header = [['in_val', 'out_val']]
+            output_list = []
 
         sum_mse = 0
 
@@ -137,9 +141,25 @@ class Adaline(Perceptron):
             error = sample_error([expected_value], [output_value])
             sum_mse += error
 
+            if save_output != '':
+                output_list.append([features[1],output_value])
+
         mse = sum_mse / dataset.size()
             
         print(f'{mse}')
+
+        if save_output != '': #Escribir en un archivo el error cometido en cada epoch
+
+            output_list.sort(key=lambda x: x[0])
+            complete_output_list = output_header + output_list
+
+            with open(save_output, 'w') as eval_results:
+                writer = csv.writer(eval_results)
+
+                for row in complete_output_list:
+                    writer.writerow(row)
+
+                eval_results.close()
 
 """ Subclase de la clase Layer, pero que utiliza Adalines en vez de Perceptrons"""
 class AdalineLayer(Layer):
@@ -286,7 +306,7 @@ class AdalineLayer(Layer):
                     if output_value[i] != -1:
                         is_incorrect = True
 
-                        if sum(output_value) == -9:
+                        if sum(output_value) == -8:
                             false_positives[str(i)] += 1
 
             if is_incorrect:
